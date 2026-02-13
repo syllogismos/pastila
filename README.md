@@ -2,7 +2,7 @@
 
 A lightweight macOS menu bar app for clipboard history. Fast, native, and zero dependencies.
 
-**[Download Pastila](https://github.com/syllogismos/pastila/releases/latest/download/Pastila.app.zip)** (70 KB) — signed and notarized
+**[Download Pastila](https://github.com/syllogismos/pastila/releases/latest/download/Pastila.app.zip)** (71 KB) — signed and notarized
 
 ## Features
 
@@ -14,7 +14,7 @@ A lightweight macOS menu bar app for clipboard history. Fast, native, and zero d
 - Smart deduplication — no repeated entries
 - Persists history across restarts (up to 100 items)
 - Menu bar only — no Dock icon, no clutter
-- **70 KB** signed and notarized, near-zero CPU usage
+- **71 KB** signed and notarized, near-zero CPU usage
 
 ## Install
 
