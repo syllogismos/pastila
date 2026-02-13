@@ -30,12 +30,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // which would replace the visual effect background)
         let vcView = popupViewController.view
         vcView.translatesAutoresizingMaskIntoConstraints = false
-        popupPanel.contentView!.addSubview(vcView)
+        let contentView = popupPanel.contentView!
+        contentView.addSubview(vcView)
         NSLayoutConstraint.activate([
-            vcView.topAnchor.constraint(equalTo: popupPanel.contentView!.topAnchor),
-            vcView.bottomAnchor.constraint(equalTo: popupPanel.contentView!.bottomAnchor),
-            vcView.leadingAnchor.constraint(equalTo: popupPanel.contentView!.leadingAnchor),
-            vcView.trailingAnchor.constraint(equalTo: popupPanel.contentView!.trailingAnchor),
+            vcView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            vcView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            vcView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            vcView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            vcView.widthAnchor.constraint(equalToConstant: 340),
+            vcView.heightAnchor.constraint(equalToConstant: 420),
         ])
 
         // Register hotkey

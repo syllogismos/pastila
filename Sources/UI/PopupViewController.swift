@@ -4,6 +4,7 @@ final class PopupViewController: NSViewController {
     private let searchField = NSTextField()
     private let scrollView = NSScrollView()
     private let tableView = NSTableView()
+    private let emptyLabel = NSTextField(labelWithString: "No clipboard history yet")
     private let store: ClipboardStore
     private let pasteService: PasteService
     private var filteredItems: [ClipboardItem] = []
@@ -28,12 +29,15 @@ final class PopupViewController: NSViewController {
     }
 
     override func loadView() {
-        view = NSView(frame: NSRect(x: 0, y: 0, width: 340, height: 420))
+        let v = NSView(frame: NSRect(x: 0, y: 0, width: 340, height: 420))
+        v.translatesAutoresizingMaskIntoConstraints = false
+        view = v
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchField()
+        setupEmptyLabel()
         setupTableView()
         reloadData()
     }
@@ -72,29 +76,47 @@ final class PopupViewController: NSViewController {
         ])
     }
 
+    private func setupEmptyLabel() {
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyLabel.font = .systemFont(ofSize: 14)
+        emptyLabel.textColor = .tertiaryLabelColor
+        emptyLabel.alignment = .center
+        emptyLabel.isHidden = true
+        view.addSubview(emptyLabel)
+
+        NSLayoutConstraint.activate([
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 20),
+        ])
+    }
+
     private func setupTableView() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.hasVerticalScroller = true
+        scrollView.scrollerStyle = .overlay
+        scrollView.borderType = .noBorder
         scrollView.drawsBackground = false
         scrollView.automaticallyAdjustsContentInsets = false
         scrollView.contentInsets = NSEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
         view.addSubview(scrollView)
 
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("main"))
-        column.width = 320
         tableView.addTableColumn(column)
         tableView.headerView = nil
         tableView.backgroundColor = .clear
         tableView.rowHeight = 44
-        tableView.style = .plain
+        tableView.gridStyleMask = []
+        tableView.gridColor = .clear
         tableView.intercellSpacing = NSSize(width: 0, height: 2)
+        tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
+        column.resizingMask = .autoresizingMask
         tableView.dataSource = self
         tableView.delegate = self
-        // Single click to paste
         tableView.action = #selector(tableClicked)
         tableView.target = self
 
         scrollView.documentView = tableView
+        tableView.sizeLastColumnToFit()
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 48),
@@ -106,6 +128,7 @@ final class PopupViewController: NSViewController {
 
     override func viewDidLayout() {
         super.viewDidLayout()
+        tableView.sizeLastColumnToFit()
         // Keep tracking area in sync with the scroll view's clip view
         if let old = trackingArea {
             scrollView.contentView.removeTrackingArea(old)
@@ -175,7 +198,12 @@ final class PopupViewController: NSViewController {
             filteredItems = store.items.filter { $0.searchText.contains(query) }
         }
         tableView.reloadData()
-        if !filteredItems.isEmpty {
+
+        let isEmpty = filteredItems.isEmpty
+        scrollView.isHidden = isEmpty
+        emptyLabel.isHidden = !isEmpty
+
+        if !isEmpty {
             tableView.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
         }
     }
@@ -274,7 +302,7 @@ final class DetailPopoverViewController: NSViewController {
 
     override func loadView() {
         let width: CGFloat = 300
-        let contentWidth = width - 24 // 12pt padding each side
+        let contentWidth = width - 24
 
         let container = NSView(frame: NSRect(x: 0, y: 0, width: width, height: 100))
 
@@ -330,10 +358,8 @@ final class DetailPopoverViewController: NSViewController {
             lastAnchor = imageView.bottomAnchor
         }
 
-        // Always show text content if available (even for images with alt text)
         let previewText = item.fullPreviewText
         if !previewText.isEmpty && item.contentType != .image {
-            // Calculate text height, capped at 200pt
             let font = NSFont.systemFont(ofSize: 12)
             let textStorage = NSTextStorage(string: previewText, attributes: [.font: font])
             let layoutContainer = NSTextContainer(containerSize: NSSize(width: contentWidth - 8, height: .greatestFiniteMagnitude))
@@ -344,7 +370,6 @@ final class DetailPopoverViewController: NSViewController {
             layoutManager.ensureLayout(for: layoutContainer)
             let textHeight = min(ceil(layoutManager.usedRect(for: layoutContainer).height) + 8, 200)
 
-            // Build the scroll view + text view with proper frame-based sizing
             let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: contentWidth, height: textHeight))
             scrollView.translatesAutoresizingMaskIntoConstraints = false
             scrollView.hasVerticalScroller = true

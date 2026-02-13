@@ -4,3 +4,4 @@ build/
 *.csr
 *.cer
 *.p12
+.claude/
