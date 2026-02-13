@@ -1,2 +1,6 @@
 build/
 .DS_Store
+*.key
+*.csr
+*.cer
+*.p12
