@@ -2,7 +2,7 @@
 
 A lightweight macOS menu bar app for clipboard history. Fast, native, and zero dependencies.
 
-**[Download Pastila](https://github.com/syllogismos/pastila/releases/latest/download/Pastila.app.zip)** (71 KB) — signed and notarized
+**[Download Pastila](https://github.com/syllogismos/pastila/releases/latest/download/Pastila.zip)** (71 KB) — signed and notarized
 
 ## Features
 
@@ -20,7 +20,7 @@ A lightweight macOS menu bar app for clipboard history. Fast, native, and zero d
 
 ### Download
 
-1. Download [`Pastila.app.zip`](https://github.com/syllogismos/pastila/releases/latest/download/Pastila.app.zip)
+1. Download [`Pastila.zip`](https://github.com/syllogismos/pastila/releases/latest/download/Pastila.zip)
 2. Unzip and drag **Pastila.app** to `/Applications`
 3. Open it — a clipboard icon appears in the menu bar
 
