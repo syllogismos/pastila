@@ -10,7 +10,10 @@ FRAMEWORKS = -framework AppKit -framework Carbon -framework CoreGraphics
 RELEASE_FLAGS = -O -whole-module-optimization
 DEBUG_FLAGS = -g -Onone
 
-.PHONY: all clean run debug
+SIGN_IDENTITY = Developer ID Application: Anil Karaka (24M2C25H4J)
+ENTITLEMENTS = Pastila.entitlements
+
+.PHONY: all clean run debug sign
 
 all: $(MACOS_DIR)/$(APP_NAME)
 
@@ -27,6 +30,12 @@ debug: $(SWIFT_FILES) Info.plist | $(MACOS_DIR)
 
 run: all
 	open $(APP_BUNDLE)
+
+sign: all
+	codesign --deep --force --options runtime \
+		--entitlements $(ENTITLEMENTS) \
+		--sign "$(SIGN_IDENTITY)" \
+		$(APP_BUNDLE)
 
 clean:
 	rm -rf $(BUILD_DIR)
